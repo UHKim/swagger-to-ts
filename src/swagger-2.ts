@@ -31,6 +31,11 @@ export interface Swagger2 {
   definitions: {
     [index: string]: Swagger2Definition;
   };
+  components: {
+    schemas: {
+      [index: string]: Swagger2Definition;
+    };
+  };
 }
 
 export interface Swagger2Options {
@@ -72,11 +77,12 @@ function parse(spec: Swagger2, options: Swagger2Options = {}): string {
     output.push(`${wrapper} {`);
   }
 
-  const { definitions } = spec;
+  const { definitions, components } = spec;
+  const schemas = components.schemas || definitions;
 
   function getRef(lookup: string): [string, Swagger2Definition] {
-    const ID = lookup.replace('#/definitions/', '');
-    const ref = definitions[ID];
+    const ID = lookup.replace('#/definitions/', '').replace('#/components/schema/', '');
+    const ref = schemas[ID];
     return [ID, ref];
   }
 
@@ -232,7 +238,7 @@ function parse(spec: Swagger2, options: Swagger2Options = {}): string {
   }
 
   // Begin parsing top-level entries
-  Object.entries(definitions).forEach((entry): void => {
+  Object.entries(schemas).forEach((entry): void => {
     const value = entry[1];
     // start with objects only
     const isObject = value.type === 'object';
