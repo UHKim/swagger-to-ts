@@ -81,7 +81,7 @@ function parse(spec: Swagger2, options: Swagger2Options = {}): string {
   const schemas = components.schemas || definitions;
 
   function getRef(lookup: string): [string, Swagger2Definition] {
-    const ID = lookup.replace('#/definitions/', '').replace('#/components/schema/', '');
+    const ID = lookup.replace('#/definitions/', '').replace('#/components/schemas/', '');
     const ref = schemas[ID];
     return [ID, ref];
   }
